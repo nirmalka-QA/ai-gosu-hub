@@ -14,19 +14,19 @@ class AutoRequirementCodeGeneration {
    * @return A map containing user stories and Gherkin scenarios.
    */
   function generateAuthenticationRequirements(requirements: List<String>): Map<String, String> {
-    var userStories = new Array<String>()
-    var gherkinScenarios = new Array<String>()
+    var userStories = []
+    var gherkinScenarios = []
 
-    for (requirement in requirements) {
+    for (requirement in requirements.whereNotNull()) {
       // Generate user story
-      var userStory = "As a user, I want " + requirement + " so that I can ensure compliance and security."
+      var userStory = "As a user, I want " + requirement.trim() + " so that I can ensure compliance and security."
       userStories.add(userStory)
 
       // Generate Gherkin scenario
       var gherkinScenario = """
         Feature: Authentication Requirement
-        Scenario: " + requirement + "
-          Given the system has the requirement for " + requirement + "
+        Scenario: " + requirement.trim() + "
+          Given the system has the requirement for " + requirement.trim() + "
           When the requirement is processed
           Then the output adheres to compliance and security standards
       """
@@ -45,7 +45,7 @@ class AutoRequirementCodeGeneration {
    * @return True if all requirements adhere to standards, otherwise false.
    */
   function ensureCompliance(requirements: List<String>): Boolean {
-    for (requirement in requirements) {
+    for (requirement in requirements.whereNotNull()) {
       if (!isCompliant(requirement)) {
         return false
       }
@@ -61,6 +61,6 @@ class AutoRequirementCodeGeneration {
   private function isCompliant(requirement: String): Boolean {
     // Placeholder logic for compliance check
     // Replace with actual implementation for encryption, data protection, and auditability
-    return requirement.contains("secure") || requirement.contains("encrypted") || requirement.contains("auditable")
+    return ["secure", "encrypted", "auditable"].anyMatch(keyword -> requirement.contains(keyword))
   }
 }
